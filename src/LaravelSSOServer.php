@@ -66,7 +66,7 @@ class LaravelSSOServer extends SSOServer
      */
     protected function authenticate(string $username, string $password)
     {
-        if (!Auth::attempt(['username' => $username, 'password' => $password])) {
+        if (!Auth::attempt(['nrp' => $username, 'password' => $password])) {
             return false;
         }
 
@@ -107,7 +107,7 @@ class LaravelSSOServer extends SSOServer
     protected function getUserInfo(string $username)
     {
         try {
-            $user = config('laravel-sso.usersModel')::where('username', $username)->firstOrFail();
+            $user = config('laravel-sso.usersModel')::where('nrp', $username)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             return null;
         }
