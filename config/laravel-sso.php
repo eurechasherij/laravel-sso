@@ -12,7 +12,8 @@ return [
      |
      */
 
-    'type' => 'server',
+    'type' => env('SSO_SERVER_TYPE', 'broker'),
+    'usernameColumn' => env('SSO_USERNAME_COLUMN', 'username'),
 
     /*
      |--------------------------------------------------------------------------
@@ -23,7 +24,7 @@ return [
      |
      */
 
-    'usersModel' => \App\User::class,
+    'usersModel' => \App\Models\User::class,
     'brokersModel' => Zefy\LaravelSSO\Models\Broker::class,
 
     // Table used in Zefy\LaravelSSO\Models\Broker model
