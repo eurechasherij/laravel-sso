@@ -26,6 +26,7 @@ return [
 
     'usersModel' => \App\Models\User::class,
     'brokersModel' => Zefy\LaravelSSO\Models\Broker::class,
+    'userResource' => Zefy\LaravelSSO\Resources\UserResource::class,
 
     // Table used in Zefy\LaravelSSO\Models\Broker model
     'brokersTable' => 'brokers',

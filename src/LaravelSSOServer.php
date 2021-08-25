@@ -124,7 +124,8 @@ class LaravelSSOServer extends SSOServer
      */
     protected function returnUserInfo($user)
     {
-        return new UserResource($user);
+        $model = config('laravel-sso.userResource');
+        return new $model($user);
     }
 
     /**
