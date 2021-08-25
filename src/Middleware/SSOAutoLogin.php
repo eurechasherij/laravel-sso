@@ -4,6 +4,7 @@ namespace Zefy\LaravelSSO\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Zefy\LaravelSSO\LaravelSSOBroker;
 
 class SSOAutoLogin
@@ -18,21 +19,27 @@ class SSOAutoLogin
     public function handle(Request $request, Closure $next)
     {
         $broker = new LaravelSSOBroker();
-        $response = $broker->getUserInfo();
+        
+        $response = Cache::remember('broker.userInfo', env('CACHE_TIME', 60), function () use ($broker) {
+            return $broker->getUserInfo();
+        });
 
         // If client is logged out in SSO server but still logged in broker.
         if (!isset($response['data']) && !auth()->guest()) {
+            Cache::forget('broker.userInfo');
             return $this->logout($request);
         }
 
         // If there is a problem with data in SSO server, we will re-attach client session.
         if (isset($response['error']) && strpos($response['error'], 'There is no saved session data associated with the broker session id') !== false) {
+            Cache::forget('broker.userInfo');
             return $this->clearSSOCookie($request);
         }
 
         // If client is logged in SSO server and didn't logged in broker...
         if (isset($response['data']) && (auth()->guest() || auth()->user()->id != $response['data']['id'])) {
             // ... we will authenticate our client.
+            Cache::forget('broker.userInfo');
             auth()->loginUsingId($response['data']['id']);
         }
 
