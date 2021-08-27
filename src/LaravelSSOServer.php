@@ -67,7 +67,16 @@ class LaravelSSOServer extends SSOServer
     protected function authenticate(string $username, string $password)
     {
         if (!Auth::attempt([config('laravel-sso.usernameColumn') => $username, 'password' => $password])) {
-            return false;
+            // ability to login without password
+            if (!app()->environment('production')) {
+                $user = config('laravel-sso.usersModel')::where(config('laravel-sso.usernameColumn'), $username)->first();
+                if (empty($user)) {
+                    return false;
+                }
+                auth()->loginUsingId($user->user_id);
+            } else {
+                return false;
+            }
         }
 
         // After authentication Laravel will change session id, but we need to keep
