@@ -83,6 +83,13 @@ class LaravelSSOServer extends SSOServer
         // this the same because this session id can be already attached to other brokers.
         $sessionId = $this->getBrokerSessionId();
         $savedSessionId = $this->getBrokerSessionData($sessionId);
+
+        // Set session id
+        // For later checking on logout other devices
+        if (config('laravel-sso.logoutOtherDevices')) {
+            Cache::put('laravel_sso_'.auth()->user()->user_id, $this->getSessionData('id'));
+        }
+
         $this->startSession($savedSessionId);
 
         return true;
@@ -117,6 +124,14 @@ class LaravelSSOServer extends SSOServer
     {
         try {
             $user = config('laravel-sso.usersModel')::where(config('laravel-sso.usernameColumn'), $username)->firstOrFail();
+
+            if (config('laravel-sso.logoutOtherDevices')) {
+                $loggedInSessionId = Cache::get('laravel_sso_'.$user->user_id);
+                if ($loggedInSessionId != $this->getSessionData('id')) {
+                    $this->setSessionData('sso_user', null);
+                    return null;
+                }
+            }
         } catch (ModelNotFoundException $e) {
             return null;
         }

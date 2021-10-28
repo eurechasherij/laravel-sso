@@ -37,6 +37,9 @@ return [
         'id' => 'id',
     ],
 
+    // Logout other logged in devices when user successfully log in
+    'logoutOtherDevices' => false,
+
     /*
      |--------------------------------------------------------------------------
      | Settings necessary for the SSO broker.
