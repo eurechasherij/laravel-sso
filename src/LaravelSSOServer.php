@@ -87,7 +87,7 @@ class LaravelSSOServer extends SSOServer
         // Set session id
         // For later checking on logout other devices
         if (config('laravel-sso.logoutOtherDevices')) {
-            Cache::put('laravel_sso_'.auth()->user()->user_id, $this->getSessionData('id'));
+            Cache::put('laravel_sso_'.auth()->user()->user_id, $savedSessionId);
         }
 
         $this->startSession($savedSessionId);
