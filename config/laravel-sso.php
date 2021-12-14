@@ -39,6 +39,7 @@ return [
 
     // Logout other logged in devices when user successfully log in
     'logoutOtherDevices' => false,
+    'ssoCacheTime' => env('SSO_CACHE_TIME', 60),
 
     /*
      |--------------------------------------------------------------------------
