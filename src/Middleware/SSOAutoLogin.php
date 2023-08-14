@@ -19,32 +19,34 @@ class SSOAutoLogin
     public function handle(Request $request, Closure $next)
     {
         $broker = new LaravelSSOBroker();
-        
-        $response = Cache::remember('broker.userInfo.'.$request->cookie('sso_token_' . config('laravel-sso.brokerName')), config('laravel-sso.ssoCacheTime', 60), function () use ($broker) {
+
+        $cookie = $request->cookie('sso_token_' . config('laravel-sso.brokerName'));
+
+        $response = Cache::remember('broker.userInfo.'.$cookie, env('CACHE_TIME', 60), function () use ($broker) {
             return $broker->getUserInfo();
         });
 
         // If client is logged out in SSO server but still logged in broker.
         if (!isset($response['data']) && !auth()->guest()) {
-            Cache::forget('broker.userInfo.'.$request->cookie('sso_token_' . config('laravel-sso.brokerName')));
+            Cache::forget('broker.userInfo.'.$cookie);
             return $this->logout($request);
         }
 
         // If there is a problem with data in SSO server, we will re-attach client session.
         if (isset($response['error']) && strpos($response['error'], 'There is no saved session data associated with the broker session id') !== false) {
-            Cache::forget('broker.userInfo.'.$request->cookie('sso_token_' . config('laravel-sso.brokerName')));
+            Cache::forget('broker.userInfo.'.$cookie);
             return $this->clearSSOCookie($request);
         }
 
         // If client is logged in SSO server and didn't logged in broker...
         if (isset($response['data']) && (auth()->guest() || auth()->user()->id != $response['data']['id'])) {
             // ... we will authenticate our client.
-            Cache::forget('broker.userInfo.'.$request->cookie('sso_token_' . config('laravel-sso.brokerName')));
+            Cache::forget('broker.userInfo.'.$cookie);
             auth()->loginUsingId($response['data']['id']);
         }
 
         if (isset($response['error'])) {
-            Cache::forget('broker.userInfo.'.$request->cookie('sso_token_' . config('laravel-sso.brokerName')));
+            Cache::forget('broker.userInfo.'.$cookie);
         }
 
         return $next($request);
@@ -58,7 +60,8 @@ class SSOAutoLogin
      */
     protected function clearSSOCookie(Request $request)
     {
-        return redirect($request->fullUrl())->cookie(cookie('sso_token_' . config('laravel-sso.brokerName')));
+        $cookie = $request->cookie('sso_token_' . config('laravel-sso.brokerName'));
+        return redirect($request->fullUrl())->cookie($cookie);
     }
 
     /**
