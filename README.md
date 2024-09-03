@@ -1,12 +1,14 @@
 # Simple PHP SSO integration for Laravel
 
+forked from [zefy\laravelsso](https://github.com/zefy/laravel-sso)
+
 <p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
 
 This package based on [Simple PHP SSO skeleton](https://github.com/zefy/php-simple-sso) package and made suitable for Laravel framework.
 
 ### Requirements
 
-* Laravel 5.5+
+* Laravel 8+
 * PHP 7.1+
 
 ### Words meanings
@@ -27,7 +29,7 @@ Client visits Broker and unique token is generated. When new token is generated 
 Install this package using composer.
 
 ```shell
-$ composer require zefy/laravel-sso
+$ composer require eurechasherij/laravel-sso
 ```
 
 Copy config file to Laravel project `config/` folder.
@@ -59,6 +61,15 @@ You can create new broker using following Artisan CLI command:
 $ php artisan sso:broker:create {name}
 ```
 
+Set 2 new options in your `.env` file:
+
+```shell
+SSO_SERVER_TYPE=
+SSO_USERNAME_COLUMN=
+```
+
+### P.S. Server must be running on production mode to allow login using correct password (on another mode you can login using any password)
+
 ---
 
 ### Broker
@@ -66,7 +77,7 @@ $ php artisan sso:broker:create {name}
 Install this package using composer.
 
 ```shell
-$ composer require zefy/laravel-sso
+$ composer require eurechasherij/laravel-sso
 ```
 
 Copy config file to Laravel project `config/` folder.
@@ -78,12 +89,11 @@ $ php artisan vendor:publish --provider="Zefy\LaravelSSO\SSOServiceProvider"
 Change `type` value in `config/laravel-sso.php` file from `server`
 to `broker`.
 
-Set 3 new options in your `.env` file:
+Set 4 new options in your `.env` file:
 
 ```shell
 SSO_SERVER_URL=
 SSO_SERVER_TYPE=
-SSO_USERNAME_COLUMN=
 SSO_BROKER_NAME=
 SSO_BROKER_SECRET=
 ```
