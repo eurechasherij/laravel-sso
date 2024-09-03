@@ -9,7 +9,7 @@ This package based on [Simple PHP SSO skeleton](https://github.com/zefy/php-simp
 ### Requirements
 
 * Laravel 8+
-* PHP 7.1+
+* PHP 8.1+
 
 ### Words meanings
 
