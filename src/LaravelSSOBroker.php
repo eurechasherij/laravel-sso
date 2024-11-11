@@ -96,7 +96,7 @@ class LaravelSSOBroker extends SSOBroker
      *
      * @return array
      */
-    protected function makeRequest(string $method, string $command, array $parameters = [])
+    public function makeRequest(string $method, string $command, array $parameters = [])
     {
         $commandUrl = $this->generateCommandUrl($command);
 
